@@ -24,6 +24,6 @@ export class User {
     @Column({unique: true})
     contact: string
 
-    @OneToMany(() => Document, (document) => document.user, {nullable: true})
+    @OneToMany(() => Document, (document) => document.user, {nullable: true, cascade: true})
     documents: Document[]
 }
