@@ -8,7 +8,9 @@ export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
   @Post()
-  create(@Body() createDocumentDto: CreateDocumentDto) {
+  create(
+    @Body() createDocumentDto: CreateDocumentDto,
+  ) {
     return this.documentsService.create(createDocumentDto);
   }
 

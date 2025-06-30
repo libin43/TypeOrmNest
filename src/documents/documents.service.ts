@@ -17,7 +17,10 @@ export class DocumentsService {
     const doc = await this.documentRepository.insert({
       doc_name: createDocumentDto.doc_name,
       doc_string: createDocumentDto.doc_string,
-      doc_type: createDocumentDto.doc_type
+      doc_type: createDocumentDto.doc_type,
+      user: {
+        id: createDocumentDto.user_id
+      }
     })
     return doc
   }

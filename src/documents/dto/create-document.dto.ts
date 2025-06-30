@@ -12,6 +12,10 @@ export class CreateDocumentDto {
     @IsString()
     doc_string: string
 
+    @IsOptional()
+    @IsString()
+    user_id: string
+
     @IsEnum(DocumentType)
     doc_type: DocumentType
 
