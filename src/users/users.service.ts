@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,32 +44,33 @@ export class UsersService {
     return res
   }
 
-  async updateUserWithDocument(updateUserWithDocumentDto: UpdateUserWithDocumentDto, id: string) {
-    // try{
+  async updateUserWithDocument(updateUserWithDocumentDto: UpdateUserWithDocumentDto, userId: string, id: string) {
 
-    // } catch(error){
+    console.log(id, 'doc id')
 
-    // } finally{
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .innerJoinAndSelect('user.documents', 'document', 'document.id = :docId', { docId: id })
+      .where('user.id = :userId', { userId })
+      .getOne();
 
-    // }
+    console.log(user, 'its user reponse')
 
-    const res = this.userRepository.update(
-      { id },
-      {
-        firstname: updateUserWithDocumentDto.user?.fname,
-        lastname: updateUserWithDocumentDto.user?.lname,
-        contact: updateUserWithDocumentDto.user?.contact,
-        password: updateUserWithDocumentDto.user?.password,
-        documents: [
-          {
-            doc_name: updateUserWithDocumentDto.document?.doc_name,
-            doc_string: updateUserWithDocumentDto.document?.doc_string,
-            doc_type: updateUserWithDocumentDto.document?.doc_type
-          }
-        ]
-      },
-    )
+    if (!user) {
+      console.error('User id not found.')
+      throw new NotFoundException('User not found')
+    }
 
+    user.firstname = updateUserWithDocumentDto.user?.fname ?? user.firstname
+    user.lastname = updateUserWithDocumentDto.user?.lname ?? user.lastname
+    user.contact = updateUserWithDocumentDto.user?.contact ?? user.contact
+    user.password = updateUserWithDocumentDto.user?.password ?? user.password
+    user.documents[0].doc_name = updateUserWithDocumentDto.document?.doc_name ?? user.documents[0].doc_name
+    user.documents[0].doc_type = updateUserWithDocumentDto.document?.doc_type ?? user.documents[0].doc_type
+    user.documents[0].doc_string = updateUserWithDocumentDto.document?.doc_string ?? user.documents[0].doc_string
+
+
+    const res = await this.userRepository.save(user)
     return res
   }
 

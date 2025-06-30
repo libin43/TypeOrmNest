@@ -19,12 +19,13 @@ export class UsersController {
     return this.usersService.createUserWithDocument(createUserWithDocumentDto)
   }
 
-  @Put('/document/:id')
+  @Put(':userId/document/:id')
   updateUserWtihDoc(
     @Body() updateUserWithDocumentDto: UpdateUserWithDocumentDto,
-    @Param() id: string
+    @Param() id: {id: string, userId: string}
   ){
-    return this.usersService.updateUserWithDocument(updateUserWithDocumentDto, id)
+    console.log(id,'obj')
+    return this.usersService.updateUserWithDocument(updateUserWithDocumentDto,id.userId, id.id)
   }
 
   @Get()
